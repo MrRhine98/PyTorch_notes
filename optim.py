@@ -1,6 +1,6 @@
 import torch
 from torch.utils.tensorboard import SummaryWriter
-writer = SummaryWriter('Logs_2')
+writer = SummaryWriter('Logs_3')
 device = torch.device('cuda')
 
 N, D_in, H, D_out = 64, 1000, 100, 10
@@ -17,15 +17,14 @@ model = torch.nn.Sequential(
 loss_fn = torch.nn.MSELoss(reduction='sum')
 
 learning_rate = 1e-4
-# optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 for i in range(500):
     y_pred = model(x)
     loss = loss_fn(y_pred, y)
     writer.add_scalar('Loss', loss.item(), i)
-    model.zero_grad()
-
+    optimizer.zero_grad()
     loss.backward()
+    optimizer.step()
 
-    with torch.no_grad():
-        for param in model.parameters():
-            param.data -= learning_rate * param.grad
+
+
